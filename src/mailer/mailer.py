@@ -50,6 +50,13 @@ class Mailer:
         except Exception as e:
             raise e
 
+    def send_order_created(self, data):
+        try:
+            subject = self._get_subject('Order Successfully')
+            self.send(subject=subject, body=self._get_body(data, self.TEMPLATE_ORDER_CREATED))
+        except Exception as e:
+            raise e
+
     def _get_subject(self, subject):
         return '{prefix} {subject}'.format(prefix=self.PREFIX, subject=subject)
 
@@ -72,5 +79,6 @@ if __name__ == '__main__':
     }
     mail = Mailer()
     # mail.send_user_registered(data)
-    mail.send_newsletter(data)
+    # mail.send_newsletter(data)
+    mail.send_order_created(data)
     
