@@ -7,6 +7,10 @@ load_dotenv(dotenv_path=env_path)
 
 
 class Config:
+
+    MAIL_PROVIDER_SUPPORTED = ['gmail', 'yandex', 'ses']
+
+    MAIL_PROVIDER = os.getenv('MAIL_PROVIDER')
     MAIL_HOST = os.getenv('MAIL_HOST')
     MAIL_PORT = os.getenv('MAIL_PORT')
     MAIL_TLS = os.getenv('MAIL_TLS', True)

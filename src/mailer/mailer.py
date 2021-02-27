@@ -17,8 +17,8 @@ class Mailer:
     TEMPLATE_NEWSLETTER = 'newsletter.minify.html'
     TEMPLATE_FORGOT_PASSWORD = 'forgot_password.minify.html'
 
-    def __init__(self):
-        pass 
+    def __init__(self, provider):
+        self._set_provider(provider)
 
     def send(self, subject, body, attachments: list = [], has_prefix: bool = False):
         if has_prefix:
@@ -38,7 +38,12 @@ class Mailer:
         except Exception as e:
             raise e
 
-    
+    def _set_provider(self, provider):
+        if provider in config.MAIL_PROVIDER_SUPPORTED:
+            self.provider = provider
+        else:
+            raise Exception(f"Only support these mail providers: {''.join(config.MAIL_PROVIDER_SUPPORTED)}")
+
     # def send_user_registered(self, data):
     #     try:
     #         subject = self._get_subject('Thank you for register awesome website')
@@ -87,7 +92,7 @@ class Mailer:
         # return t.render(data)
 
 if __name__ == '__main__':
-    mail = Mailer()
+    mail = Mailer(provider='gmail')
     
     subject = "Reset your password"
     data = {
