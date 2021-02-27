@@ -1,19 +1,7 @@
 import os
 import yagmail
 from jinja2 import Template, Environment, FileSystemLoader
-from dotenv import load_dotenv
-
-load_dotenv()
-
-MAIL_HOST = os.getenv('MAIL_HOST')
-MAIL_PORT = os.getenv('MAIL_PORT')
-MAIL_TLS = os.getenv('MAIL_TLS', True)
-MAIL_USERNAME = os.getenv('MAIL_USERNAME')
-MAIL_PASSWORD = os.getenv('MAIL_PASSWORD')
-MAIL_RECEIVERS = os.getenv('MAIL_RECEIVERS')
-
-if MAIL_RECEIVERS is not None and MAIL_RECEIVERS.find(',') > -1:
-    MAIL_RECEIVERS = MAIL_RECEIVERS.split(',')
+from config import config
 
 
 class Mailer:
@@ -28,9 +16,9 @@ class Mailer:
         pass 
 
     def send(self, subject, body):
-        yag = yagmail.SMTP(MAIL_USERNAME, MAIL_PASSWORD)
+        yag = yagmail.SMTP(config.MAIL_USERNAME, config.MAIL_PASSWORD)
         yag.send(
-            to=MAIL_RECEIVERS,
+            to=config.MAIL_RECEIVERS,
             subject=subject,
             contents=body, 
         )
