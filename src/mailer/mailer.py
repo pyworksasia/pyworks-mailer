@@ -1,5 +1,9 @@
 import os
+import codecs
+import io
 import yagmail
+import htmlmin
+import minifier
 from jinja2 import Template, Environment, FileSystemLoader
 from config import config
 
@@ -11,62 +15,87 @@ class Mailer:
     TEMPLATE_USER_REGISTERED = 'user_registered.minify.html'
     TEMPLATE_ORDER_CREATED = 'order_created.minify.html'
     TEMPLATE_NEWSLETTER = 'newsletter.minify.html'
+    TEMPLATE_FORGOT_PASSWORD = 'forgot_password.minify.html'
 
     def __init__(self):
         pass 
 
-    def send(self, subject, body):
-        yag = yagmail.SMTP(config.MAIL_USERNAME, config.MAIL_PASSWORD)
-        yag.send(
-            to=config.MAIL_RECEIVERS,
-            subject=subject,
-            contents=body, 
-        )
+    def send(self, subject, body, attachments: list = [], has_prefix: bool = False):
+        if has_prefix:
+            subject = self._get_subject(subject)
+
+        if attachments and len(attachments):
+            pass
+
+        try:
+            yag = yagmail.SMTP(config.MAIL_USERNAME, config.MAIL_PASSWORD)
+            yag.send(
+                to=config.MAIL_RECEIVERS,
+                subject=subject,
+                contents=body, 
+            )
+            return True
+        except Exception as e:
+            raise e
 
     
-    def send_user_registered(self, data):
-        try:
-            subject = self._get_subject('Thank you for register awesome website')
-            self.send(subject=subject, body=self._get_body(data, self.TEMPLATE_USER_REGISTERED))
-        except Exception as e:
-            raise e
+    # def send_user_registered(self, data):
+    #     try:
+    #         subject = self._get_subject('Thank you for register awesome website')
+    #         body=self.render_body(data, self.TEMPLATE_USER_REGISTERED)
+    #         self.send(subject=subject, body=body)
+    #     except Exception as e:
+    #         raise e
 
-    def send_newsletter(self, data):
-        try:
-            subject = self._get_subject('New Content Publishing API, PyWorks Community Blog, and more')
-            self.send(subject=subject, body=self._get_body(data, self.TEMPLATE_NEWSLETTER))
-        except Exception as e:
-            raise e
+    # def send_newsletter(self, data):
+    #     try:
+    #         subject = self._get_subject('New Content Publishing API, PyWorks Community Blog, and more')
+    #         self.send(subject=subject, body=self.render_body(data, self.TEMPLATE_NEWSLETTER))
+    #     except Exception as e:
+    #         raise e
 
-    def send_order_created(self, data):
-        try:
-            subject = self._get_subject('Order Successfully')
-            self.send(subject=subject, body=self._get_body(data, self.TEMPLATE_ORDER_CREATED))
-        except Exception as e:
-            raise e
+    # def send_order_created(self, data):
+    #     try:
+    #         subject = self._get_subject('Order Successfully')
+    #         self.send(subject=subject, body=self.render_body(data, self.TEMPLATE_ORDER_CREATED))
+    #     except Exception as e:
+    #         raise e
 
     def _get_subject(self, subject):
         return '{prefix} {subject}'.format(prefix=self.PREFIX, subject=subject)
 
-    def _get_body(self, data, template):                    
-        return self._render_from_template(data, template_file=template)
+    def render_body(self, data, template):                    
+        return self.render_from_template(data, template_file=template)
 
-    def _render_from_template(self, data, template_file):
+    def render_from_template(self, data, template_name, overwrite_minify:bool = False):
+        # Minify template file 
+        template_file = f'{self.TEMPLATES_ROOT_DIR}/{template_name}.html'
+        template_file_minified = f'{self.TEMPLATES_ROOT_DIR}/{template_name}.min.html'
+
+        if not os.path.isfile(template_file_minified) or overwrite_minify:
+            minifier.minify(input_file=template_file, output_file=template_file_minified)
+
+        # Parse template data from minified template
         file_loader = FileSystemLoader(self.TEMPLATES_ROOT_DIR)
         env = Environment(loader=file_loader)
-        template = env.get_template(template_file)
+        template_min = f'{template_name}.min.html'
+        template = env.get_template(template_min)
         output = template.render(data)
         return output
-        
+
+        # t = Template(template_file_minified)
+        # return t.render(data)
 
 if __name__ == '__main__':
+    mail = Mailer()
+    
+    subject = "Reset your password"
     data = {
         "user": {
             "fullname": "Brian Lee"
         }
     }
-    mail = Mailer()
-    # mail.send_user_registered(data)
-    # mail.send_newsletter(data)
-    mail.send_order_created(data)
+    body = mail.render_from_template(data=data, template_name='forgot_password')
+    # print(body)
+    mail.send(subject=subject, body=body)
     
