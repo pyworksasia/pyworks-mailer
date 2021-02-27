@@ -11,7 +11,7 @@ from config import config
 class Mailer:
 
     PREFIX='[Pyworks Mailer]'
-    TEMPLATES_ROOT_DIR = 'templates'
+    TEMPLATES_ROOT_DIR = config.MAIL_TEMPLATES_ROOT
     TEMPLATE_USER_REGISTERED = 'user_registered.minify.html'
     TEMPLATE_ORDER_CREATED = 'order_created.minify.html'
     TEMPLATE_NEWSLETTER = 'newsletter.minify.html'
