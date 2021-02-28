@@ -10,6 +10,16 @@ PyWork Mailer provide fast way to use SMTP mail and the most email templates.
 
 ... and more
 
+## TODO
+
+- [x] Auto load configuration form .env file.
+- [x] Auto load all templates file.
+- [x] Minify mail template HTML.
+- [x] Support Gmail mail.
+- [ ] Support Amazon SES mail.
+- [ ] Support Yandex mail.
+
+
 ## Requies
 
 - Python 3.7+

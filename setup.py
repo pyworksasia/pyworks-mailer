@@ -117,7 +117,7 @@ setup(
 
     # When your source code is in a subdirectory under the project root, e.g.
     # `src/`, it is necessary to specify the `package_dir` argument.
-    package_dir={'': 'src'},  # Optional
+    # package_dir={'': 'mailer'},  # Optional
 
     # You can just specify package directories manually here if your project is
     # simple. Or you can use find_packages().
@@ -128,7 +128,7 @@ setup(
     #
     #   py_modules=["my_module"],
     #
-    packages=find_packages(where='src'),  # Required
+    packages=find_packages(where='mailer'),  # Required
 
     # Specify which Python versions you support. In contrast to the
     # 'Programming Language' classifiers above, 'pip install' will check this
@@ -142,7 +142,12 @@ setup(
     #
     # For an analysis of "install_requires" vs pip's requirements files see:
     # https://packaging.python.org/en/latest/requirements.html
-    install_requires=['peppercorn'],  # Optional
+    install_requires=[
+        'python-dotenv==0.15.0',
+        'jinja2==2.11.3',
+        'yagmail==0.14.245',
+        'htmlmin==0.1.12'
+    ],  # Optional
 
     # List additional groups of dependencies here (e.g. development
     # dependencies). Users will be able to install these using the "extras"

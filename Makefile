@@ -1,8 +1,11 @@
+init:
+	cp ./mailer/.env.sample ./mailer/.env
+
 test:
-	python -m pytest --pyargs src
+	python -m pytest
 
 build:
 	python setup.py sdist
 
-test-minify:
-	htmlmin ./src/mailer/templates/order_created.html ./src/mailer/templates/order_created.minify.html
+minify:
+	htmlmin ./src/mailer/templates/$$template.html ./src/mailer/templates/$$template.minify.html
