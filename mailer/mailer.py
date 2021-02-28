@@ -3,9 +3,10 @@ import codecs
 import io
 import yagmail
 import htmlmin
-import minifier
 from jinja2 import Template, Environment, FileSystemLoader
-from config import config
+
+from mailer.config import config
+from mailer import minifier
 
 
 class Mailer:
@@ -36,7 +37,8 @@ class Mailer:
             )
             return True
         except Exception as e:
-            raise e
+            # raise e
+            return False
 
     def _set_provider(self, provider):
         if provider in config.MAIL_PROVIDER_SUPPORTED:
